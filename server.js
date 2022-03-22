@@ -42,14 +42,14 @@ require('./server/routes')(app);
 
 // Return default result for not in routes get requests
 app.get('*', (req, res) => res.status(400).send({
-  error: 'Not found'
+  error: 'URL not found'
 }));
 
 // Return default result for not in routes post requests
 app.post('*', (req, res) => {
   console.log('POST Request: ' + JSON.stringify(req.body));
   return res.status(404).send({
-    error: 'Not found'
+    error: 'URL not found'
   });
 });
 

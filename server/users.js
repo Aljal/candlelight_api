@@ -33,6 +33,7 @@ const getUsers = async (req, res) => {
 
 const createUsers = async (req, res) => {
   const user = getParameters(req);
+  // Check for missing quired fields
   let missingFields = [];
   userFields.forEach((field) => {
     if (isNull(user[field])) {
@@ -42,12 +43,30 @@ const createUsers = async (req, res) => {
   if (missingFields.length > 0) {
     return res.status(400).send({ message: `Missing field ${missingFields.join(', ')}` });
   }
+  // Hash password
+  let hash;
   try {
-    const result = await knex('users').insert({ ...user, active: true });
-    res.status(200).send(result);
+    hash = bcrypt.hashSync(user.password, salt);
   } catch (e) {
     console.error(e);
-    res.status(409).send({ message: 'Email already exist' });
+    return res.status(500).send({ message: 'Password hash failed' });
+  }
+  // Delete password from user
+  delete user.password;
+  // Save user and hash as active
+  try {
+    console.log('Before insert:', user);
+    await knex('users').insert({ ...user, active: true, hash });
+    return res.status(200).send(user);
+  } catch (e) {
+    console.error(e);
+    if (!isNull(e.routine) && e.routine === 'DateTimeParseError') {
+      return res.status(400).send({ message: 'Wrong parameter: birthday date' });
+    }
+    if (!isNull(e.constraint) && e.constraint === 'users_email_unique') {
+      return res.status(409).send({ message: 'Email already exist' });
+    }
+    return res.status(400).send({ message: 'Unknow insert error' });
   }
 };
 
