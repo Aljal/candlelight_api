@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
 
-const { isNull } = require('../utils/appUtils');
+const { isNull, getParameters } = require('../utils/appUtils');
 const { generateToken, getUserId } = require('../utils/jwtUtils');
 
 const userFields = [
@@ -16,8 +16,12 @@ const userFields = [
   'birthday',
 ];
 
-const getParameters = (req) => ({ ...req.body, ...req.param });
-
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @returns The userId if the header contains a valid JWT, otherwise returns null and send an error 401.
+ */
 const checkToken = (req, res) => {
   const userId = getUserId(req.headers.authorization);
   if (!userId) {
@@ -26,14 +30,14 @@ const checkToken = (req, res) => {
   return userId;
 };
 
-const getUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   const result = await knex.select().table('users');
   res.status(200).send(result);
 };
 
 const createUsers = async (req, res) => {
   const user = getParameters(req);
-  // Check for missing quired fields
+  // Check for missing required fields
   let missingFields = [];
   userFields.forEach((field) => {
     if (isNull(user[field])) {
@@ -51,13 +55,12 @@ const createUsers = async (req, res) => {
     console.error(e);
     return res.status(500).send({ message: 'Password hash failed' });
   }
-  // Delete password from user
+  // Delete password from user object
   delete user.password;
   // Save user and hash as active
   try {
-    console.log('Before insert:', user);
     await knex('users').insert({ ...user, active: true, hash });
-    return res.status(200).send(user);
+    return res.status(201).send(user);
   } catch (e) {
     console.error(e);
     if (!isNull(e.routine) && e.routine === 'DateTimeParseError') {
@@ -97,8 +100,9 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-  getUsers,
+  getAllUsers,
   createUsers,
   updateUsers,
-  login
+  login,
+  checkToken,
 }
