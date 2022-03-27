@@ -2,12 +2,14 @@
 
 const app = require('../server');
 const users = require('./users');
+const products = require('./products');
 const {
   getUsers,
   createUsers,
   updateUsers,
   login
 } = users;
+const { getProducts } = products;
 
 const inProgress = (req, res) => res.status(200).send({ message: 'In progress' });
 
@@ -23,7 +25,7 @@ module.exports = (app) => {
   app.post('/api/users/login', login);
 
   // Products
-  app.get('/api/products', inProgress);
+  app.get('/api/products', getProducts);
 
   // Orders
   app.get('/api/orders', inProgress);
