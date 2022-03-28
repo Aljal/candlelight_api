@@ -21,11 +21,11 @@ The *.env* file needs to contain the following data:
 HOST=localhost
 PORT=8080
 
-PGHOST=localhost
-PGPORT=5432
-PGUSER=dbuser
-PGDATABASE=candlelight
-PGPASSWORD=<the dbuser password provided at the previous step>
+PG_HOST=localhost
+PG_PORT=5432
+PG_USER=dbuser
+PG_DATABASE=candlelight
+PG_PASSWD=<the dbuser password provided at the previous step>
 ```
 HOST and PORT defines the host and port for the express library used by our Node js server.
 The rest of the variable stand to connect to our database *candlelight* using our *dbuser* role with credential for security purpose.
