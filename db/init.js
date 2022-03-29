@@ -113,6 +113,7 @@ const knex = require('./connection').knex;
       console.log('Create table product_images');
       return await knex.schema.createTable('product_images', function (t) {
         t.increments('id').primary();
+        t.integer('order');
         t.integer('product_id').references('id').inTable('products').onDelete('cascade');
         t.integer('image_id').references('id').inTable('images').onDelete('cascade');
       });

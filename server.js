@@ -37,6 +37,9 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// App images
+app.use('/api/public', express.static(__dirname + '/public'));
+
 // Require our routes into the application.
 require('./server/routes')(app);
 
