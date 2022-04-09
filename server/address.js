@@ -16,7 +16,7 @@ const addressFields = [
   'second_part',
 ];
 
-const createAddress = (req, res) => {
+const createAddress = async (req, res) => {
   const id = checkToken(req, res);
   if (!id) return;
   const address = getParameters(req);
@@ -36,7 +36,7 @@ const createAddress = (req, res) => {
   res.status(201).send();
 };
 
-const updateAddress = (req, res) => {
+const updateAddress = async (req, res) => {
   const id = checkToken(req, res);
   if (!id) return;
   const address = getParameters(req);
