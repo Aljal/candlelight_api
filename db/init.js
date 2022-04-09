@@ -2,7 +2,7 @@
 
 const knex = require('./connection').knex;
 
-// users has 2 addresses
+// users has one address
 (async () => {
   await knex.schema.hasTable('addresses').then(async function (exist) {
     if (!exist) {

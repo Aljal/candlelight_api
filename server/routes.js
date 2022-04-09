@@ -8,8 +8,9 @@ const {
   login
 } = require('./users');
 const { getProductOptions } = require('./productOptions');
-const { getProducts } = require('./products');const { getCollections } = require('./collections');
-;
+const { getProducts } = require('./products');
+const { getCollections } = require('./collections');
+const { createAddress, updateAddress } = require('./address');
 
 const inProgress = (req, res) => res.status(501).send({ message: 'In progress' });
 
@@ -23,6 +24,10 @@ module.exports = (app) => {
   app.get('/api/users', getUser);
   app.patch('/api/users/:id', updateUsers);
   app.post('/api/users/login', login);
+
+  // Addresses
+  app.post('/api/addresses', createAddress);
+  app.patch('/api/addresses', updateAddress);
 
   // Products
   app.get('/api/products', getProducts);
