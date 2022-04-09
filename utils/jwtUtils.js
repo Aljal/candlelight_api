@@ -45,6 +45,6 @@ module.exports = {
         expiresIn: expirationHours
       }
     );
-    return token;
+    return { token };
   }
 }

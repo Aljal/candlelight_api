@@ -36,7 +36,7 @@ const COLLECTION_NAMES = {
   */
 const products = [
   {
-    ref: "#2203001",
+    reference: "#2203001",
     name: "Milkshake",
     description: "Bougie coulée en pot (argenté) faite à la main. Effet irisé nacré pendant la fonte. Parfum délicat, gourmand et envoûtant de Vanille.",
     price: "22",
@@ -45,7 +45,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_GOURMANDES,
   },
   {
-    ref: "#2203002",
+    reference: "#2203002",
     name: "Crumble",
     description: "Bougie coulée en pot (doré) faite à la main. Effet velours bordeaux irisé pendant la fonte. Parfum savoureux et gourmand de Cerise et de Vanille.",
     price: "20",
@@ -54,7 +54,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_GOURMANDES,
   },
   {
-    ref: "#2203003",
+    reference: "#2203003",
     name: "Cherry Dream",
     description: "Bougie coulée en pot (doré) faite à la main.Effet velours rouge irisé pendant la fonte. Parfum doux et savoureux de Cerise.",
     price: "22",
@@ -64,7 +64,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_GOURMANDES,
   },
   {
-    ref: "#2203004",
+    reference: "#2203004",
     name: "Sunkissed",
     description: "Bougie coulée en pot (argenté) faite à la main. Effet turquoise irisé pendant la fonte. Parfum solaire et exotique de Monoï.",
     price: "22",
@@ -74,7 +74,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_SOLAIRES,
   },
   {
-    ref: "#2203005",
+    reference: "#2203005",
     name: "Sunny Day",
     description: "Bougie coulée en pot (doré) faite à la main. Effet or liquide pendant la fonte. Parfum frais et lumineux d'agrumes et d'épices.",
     price: "22",
@@ -84,7 +84,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_SOLAIRES,
   },
   {
-    ref: "#2203006",
+    reference: "#2203006",
     name: "Precious",
     description: "Bougie coulée en pot (doré) faite à la main. Effet Cuivre liquide pendant la fonte. Parfum envoûtant et sulfureux avec des notes de Monoï, d'agrumes et d'épices.",
     price: "22",
@@ -94,7 +94,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_SOLAIRES,
   },
   {
-    ref: "#2203007",
+    reference: "#2203007",
     name: "Violet Lady",
     description: "Bougie coulée en pot (argenté) faite à la main. Effet satin violet et nacre pendant la fonte. Parfum élégant, frais, tendre et poudré de Violette et de Lavande Musquée.",
     price: "22",
@@ -103,7 +103,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_ELEGANTES,
   },
   {
-    ref: "#2203008",
+    reference: "#2203008",
     name: "Purple Rain",
     description: "Bougie coulée en pot (argenté) faite à la main. Effet bleu hypnotique pendant la fonte. Parfum tendre et chaleureux de violette avec des notes d'ambre orientale.",
     price: "20",
@@ -112,7 +112,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_ELEGANTES,
   },
   {
-    ref: "#2203009",
+    reference: "#2203009",
     name: "Lavender Wish",
     description: "Bougie coulée en pot (argenté) faite à la main. Effet violet nacré pendant la fonte. Parfum intense et frais de Lavande de Provence.",
     price: "20",
@@ -121,7 +121,7 @@ const products = [
     collectionName: COLLECTION_NAMES.LES_ELEGANTES,
   },
   {
-    ref: "#2203010",
+    reference: "#2203010",
     name: "Warm Embrace",
     description: "Bougie coulée en pot (doré) faite à la main. Effet Bronze Pailleté pendant la fonte. Parfum élégant et chaleureux délicatement Vanillé et Ambré.",
     price: "22",

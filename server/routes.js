@@ -1,14 +1,15 @@
 'use strict';
 
-const products = require('./products');
 const { getOrders, createOrder } = require('./orders');
 const {
-  getAllUsers,
+  getUser,
   createUsers,
   updateUsers,
   login
 } = require('./users');
-const { getProducts } = products;
+const { getProductOptions } = require('./productOptions');
+const { getProducts } = require('./products');const { getCollections } = require('./collections');
+;
 
 const inProgress = (req, res) => res.status(501).send({ message: 'In progress' });
 
@@ -19,12 +20,18 @@ module.exports = (app) => {
 
   // Users
   app.post('/api/users', createUsers);
-  app.get('/api/users', getAllUsers);
+  app.get('/api/users', getUser);
   app.patch('/api/users/:id', updateUsers);
   app.post('/api/users/login', login);
 
   // Products
   app.get('/api/products', getProducts);
+
+  // Products options
+  app.get('/api/product_options', getProductOptions);
+
+  // Collections
+  app.get('/api/collections', getCollections);
 
   // Orders
   app.get('/api/orders', getOrders);

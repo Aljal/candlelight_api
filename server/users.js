@@ -30,9 +30,18 @@ const checkToken = (req, res) => {
   return userId;
 };
 
-const getAllUsers = async (req, res) => {
-  const result = await knex.select().table('users');
-  res.status(200).send(result);
+const getUser = async (req, res) => {
+  const id = checkToken(req, res);
+  if (!id) return;
+  const userResult = await knex('users').where('id', id);
+  if (!userResult || userResult.length === 0) return res.status(404).send({ message: 'User not found' });
+  const user = userResult[0];
+  let address= null;
+  if (user.address_id) {
+    const addressResult = await knex('addresses').where('id', user.address_id);
+    address=addressResult[0];
+  }
+  res.status(200).send({...user, address});
 };
 
 const createUsers = async (req, res) => {
@@ -60,7 +69,7 @@ const createUsers = async (req, res) => {
   // Save user and hash as active
   try {
     await knex('users').insert({ ...user, active: true, hash });
-    return res.status(201).send(user);
+    return res.status(201).send(generateToken(user));
   } catch (e) {
     console.error(e);
     if (!isNull(e.routine) && e.routine === 'DateTimeParseError') {
@@ -90,17 +99,20 @@ const updateUsers = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = getParameters(req);
   const user = await knex('users').where('email', email);
-  if (!user) {
+  if (!user || user.length === 0) {
     return res.status(404).send({ message: 'User not found' });
   }
-  if (bcrypt.compareSync(password, user.hash)) {
-    return res.status(200).send({ token: generateToken(user) });
+  if (!password || password === '') {
+    return res.status(400).send({ message: 'Password required' });
+  }
+  if (bcrypt.compareSync(password, user[0].hash)) {
+    return res.status(200).send(generateToken(user[0]));
   }
   res.status(403).send({ message: 'Wrong password' });
 };
 
 module.exports = {
-  getAllUsers,
+  getUser,
   createUsers,
   updateUsers,
   login,

@@ -33,8 +33,7 @@ const knex = require('./connection').knex;
         t.string('phone', 100);
         t.datetime('birthday');
         t.boolean('active');
-        t.integer('delivery_address_id').references('id').inTable('addresses').onDelete('cascade');
-        t.integer('billing_address_id').references('id').inTable('addresses').onDelete('cascade');
+        t.integer('address_id').references('id').inTable('addresses').onDelete('cascade');
       });
     } else {
       console.log('Table users already exist');
@@ -76,7 +75,7 @@ const knex = require('./connection').knex;
       console.log('Create table products');
       return await knex.schema.createTable('products', function (t) {
         t.increments('id').primary();
-        t.string('ref').unique();
+        t.string('reference').unique();
         t.string('name', 100);
         t.text('description');
         t.integer('price');
