@@ -7,7 +7,16 @@ const morgan = require('morgan');
 const path = require('path');
 const fs = require('fs');
 var cors = require('cors');
+
+const { calculateOrderAmount } = require('./utils/appUtils');
+
 require('dotenv').config();
+
+const STRIPE_API_KEY = process.env.NODE_ENV === 'development'
+? process.env.STRIPE_API_KEY_TEST
+: process.env.STRIPE_API_KEY_PRODUCTION;
+
+const stripe = require('stripe')(STRIPE_API_KEY);
 
 const host = process.env.HOST;
 const port = process.env.PORT;
@@ -26,11 +35,14 @@ if (!fs.existsSync(logDir)) {
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs/access.log'), { flags: 'a' })
 
 // Log requests to the access.log
-app.use(morgan(':remote-addr\t:method\t:url\t:status\t:response-time ms\t:date[web]', { stream: accessLogStream }));
-
-// Log requests to the console
-app.use(morgan('dev'));
-app.use(morgan(':remote-addr :date[web]'));
+app.use(morgan(':remote-addr\t:method\t:url\t:status\t:response-time ms\t:date[web]', {
+  stream: {
+    write(log) {
+      accessLogStream.write(log);
+      console.log(log);
+    }
+  }
+}));
 
 // Index.html at root
 app.get('/', function (req, res) {
@@ -40,8 +52,31 @@ app.get('/', function (req, res) {
 // App images
 app.use('/api/public', express.static(__dirname + '/public'));
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({ message: 'Something something went wrong' });
+});
+
 // Require our routes into the application.
 require('./server/routes')(app);
+
+// Create payment order
+app.post('/process-payment', async (req, res) => {
+  const { items } = req.body;
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: calculateOrderAmount(items),
+    currency: "eur",
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 
 // Return default result for not in routes get requests
 app.get('*', (req, res) => res.status(400).send({

@@ -1,8 +1,8 @@
 'use strict';
 
 const knex = require('../db/connection').knex;
-const { getParameters } = require('../utils/appUtils');
-const {  checkToken } = require('./users');
+const { getParameters, isNull } = require('../utils/appUtils');
+const { checkToken } = require('./users');
 
 const requiredAddressFields = [
   'first_part',
@@ -31,26 +31,25 @@ const createAddress = async (req, res) => {
   }
   const address_id = await knex('addresses').insert(address, 'id');
   await knex('users')
-  .where('id', '=', id)
-  .update({ address_id });
+    .where('id', '=', id)
+    .update({ address_id: address_id[0].id });
   res.status(201).send();
 };
 
 const updateAddress = async (req, res) => {
   const id = checkToken(req, res);
   if (!id) return;
-  const address = getParameters(req);
-  if (Object.key(address).some((field) => !addressFields.includes(field))) {
+  const { id: address_id, ...address } = getParameters(req);
+  if (Object.keys(address).some((field) => !addressFields.includes(field))) {
     res.status(400).send({ message: 'Field not allowed' });
   }
-  const user = await knex.select('users').where('id', id);
+  const user = await knex('users').where('id', id);
   if (!user || user.length === 0) {
-    return res.status(404).send({message: 'User not found'});
+    return res.status(404).send({ message: 'User not found' });
   }
-  const address_id = user[0].address_id;
   await knex('addresses')
-  .where('id', '=', address_id)
-  .update(address);
+    .where('id', '=', address_id)
+    .update(address);
   res.status(200).send();
 };
 

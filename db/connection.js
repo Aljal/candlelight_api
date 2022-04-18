@@ -15,7 +15,7 @@ const {
 
 const knex = require('knex')({
   client: 'postgres',
-  debug: NODE_ENV === 'developement',
+  debug: NODE_ENV === 'development',
   connection: {
     host : PG_HOST,
     port : PG_PORT,

@@ -10,7 +10,7 @@ const knex = require('./connection').knex;
       return await knex.schema.createTable('addresses', function (t) {
         t.increments('id').primary();
         t.string('first_part', 100);
-        t.string('seccond_part', 100);
+        t.string('second_part', 100);
         t.string('city', 100);
         t.string('zip_code', 100);
         t.string('country', 100);
