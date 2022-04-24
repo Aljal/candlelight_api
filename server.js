@@ -8,13 +8,14 @@ const path = require('path');
 const fs = require('fs');
 var cors = require('cors');
 
-const { calculateOrderAmount } = require('./utils/appUtils');
+const { checkToken } = require('./server/users');
+const knex = require('./db/connection').knex;
 
 require('dotenv').config();
 
 const STRIPE_API_KEY = process.env.NODE_ENV === 'development'
-? process.env.STRIPE_API_KEY_TEST
-: process.env.STRIPE_API_KEY_PRODUCTION;
+  ? process.env.STRIPE_API_KEY_TEST
+  : process.env.STRIPE_API_KEY_PRODUCTION;
 
 const stripe = require('stripe')(STRIPE_API_KEY);
 
@@ -63,11 +64,25 @@ require('./server/routes')(app);
 // Create payment order
 app.post('/process-payment', async (req, res) => {
   const { items } = req.body;
+  if (!checkToken(req, res)) return;
+
+  const products = await knex.select().table('products');
+  const productOptions = await knex.select().table('product_options');
+  let amount = 5;
+  items.forEach((item) => {
+    const currentProduct = products.find(product => product.id === item.id);
+    const currentOption = productOptions.find(option => option.id === item.option.id);
+    console.log('currentProduct:', currentProduct.price, ', currentOption:', currentOption.price);
+    amount += currentProduct.price + currentOption.price;
+  });
+  amount *= 100;
+
+  console.log('amount:', amount);
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
-    currency: "eur",
+    amount,
+    currency: 'eur',
     automatic_payment_methods: {
       enabled: true,
     },

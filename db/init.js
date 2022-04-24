@@ -129,6 +129,7 @@ const knex = require('./connection').knex;
       return await knex.schema.createTable('orders', function (t) {
         t.increments('id').primary();
         t.string('order_id', 100);
+        t.string('payment_id');
         t.datetime('date');
         t.integer('user_id').references('id').inTable('users').onDelete('cascade');
       });

@@ -3,28 +3,47 @@
 const knex = require('../db/connection').knex;
 const moment = require('moment');
 
-const { isNull, getParameters } = require('../utils/appUtils');
+const { getParameters } = require('../utils/appUtils');
 
 const { checkToken } = require('./users');
 
-// TODO: refacto to choose variables name between camel case and snake case
+const getOrderId = (userId) => {
+  const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const charactersLen = characters.length;
+  const randomstringLen = 8;
+  let randomString = '';
+  for (let i = 0; i < randomstringLen; i++) {
+    const random = Math.floor(Math.random() * 100) % charactersLen;
+    randomString += characters[random];
+  }
+  const date = moment();
+  const formatedDate = date.format('YYYYMMDD');
+  const formatedUserId = '000'.slice(String(userId).length) + userId;
+  return `${formatedDate}-${randomString}-${formatedUserId}`;
+};
+
 const createOrder = async (req, res) => {
   // products should be an array of product id and product_option id, ex: [{productId: 2, productOptionId: 1}]
-  const { products } = getParameters(req);
+  const { products, paymentId } = getParameters(req);
   const userId = checkToken(req, res);
   if (!userId) return;
-  const date = moment();
-  const formatedDate = date.format('YYYY-MM-DD');
   try {
-    let count = await knex('orders').where('date', formatedDate);
-    count = String(count.length);
-    const order_id = date.format(`YYYYMMDD${'000'.slice(count.length) + count}`);
-    const id = await knex('orders').insert({ order_id, date: formatedDate, user_id: userId }, 'id');
+    const payment_id = await knex('orders').where('payment_id', paymentId);
+    if (payment_id && payment_id.length > 0) {
+      return res.status(409).send({message: 'An order already exist for this payment ID'});
+    }
+    const order_id = getOrderId(userId);
+    const id = await knex('orders').insert({
+      order_id,
+      date: moment().format('YYYY-MM-DD hh:mm:ss'),
+      user_id: userId,
+      payment_id: paymentId,
+    }, 'id');
     for (let product of products) {
       knex('order_items').insert({
-        product_id: product.productId,
-        product_option_id: productOptionId,
-        order_id: id[0],
+        product_id: product.id,
+        product_option_id: product.option.id,
+        order_id: id[0].id,
       });
     }
     res.status(201).send();
@@ -38,7 +57,11 @@ const getOrders = async (req, res) => {
   const userId = checkToken(req, res);
   if (!userId) return;
   const orders = await knex('orders').where('user_id', userId);
-  res.status(200).send(orders);
+  const result = orders.map(async (order) => {
+    const orderItems = await knex('order_items').where('order_id', order.id);
+    return ({ order, orderItems });
+  });
+  res.status(200).send(result);
 };
 
 module.exports = {

@@ -36,12 +36,12 @@ const getUser = async (req, res) => {
   const userResult = await knex('users').where('id', id);
   if (!userResult || userResult.length === 0) return res.status(404).send({ message: 'User not found' });
   const user = userResult[0];
-  let address= null;
+  let address = null;
   if (user.address_id) {
     const addressResult = await knex('addresses').where('id', user.address_id);
-    address=addressResult[0];
+    address = addressResult[0];
   }
-  res.status(200).send({...user, address});
+  res.status(200).send({ ...user, address });
 };
 
 const createUsers = async (req, res) => {

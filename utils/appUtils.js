@@ -5,11 +5,7 @@ const isNull = (value) => {
   return ['', null, undefined].includes(value);
 };
 
-const getParameters = (req) => {
-  const parameters = ({ ...req.body, ...req.param });
-  console.log('parameters:', parameters);
-  return parameters;
-};
+const getParameters = (req) => ({ ...req.body, ...req.param });
 
 const calculateOrderAmount = (items) => {
   let amount = 0;

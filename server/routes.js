@@ -41,6 +41,4 @@ module.exports = (app) => {
   // Orders
   app.get('/api/orders', getOrders);
   app.post('/api/orders', createOrder);
-  app.patch('/api/orders/:id', inProgress);
-  app.delete('/api/orders/:id', inProgress);
 };
