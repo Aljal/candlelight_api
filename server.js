@@ -93,11 +93,6 @@ app.post('/process-payment', async (req, res) => {
   });
 });
 
-// Return default result for not in routes get requests
-app.get('*', (req, res) => res.status(400).send({
-  error: 'URL not found'
-}));
-
 // Return default result for not in routes post requests
 app.post('*', (req, res) => {
   console.log('POST Request: ' + JSON.stringify(req.body));
