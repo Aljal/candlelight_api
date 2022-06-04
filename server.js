@@ -62,7 +62,7 @@ app.use((err, req, res, next) => {
 require('./server/routes')(app);
 
 // Create payment order
-app.post('/process-payment', async (req, res) => {
+app.post('/api/process-payment', async (req, res) => {
   const { items } = req.body;
   if (!checkToken(req, res)) return;
 
